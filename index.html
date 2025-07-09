@@ -58,11 +58,7 @@
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwsbMrYAmOLxnrIqK0NtWQzieJ3SO_ymRnCNFQ-YD7KdyZWiYIWfMSFS3JXjFUOfgswcA/exec'; // ← вставь сюда свой URL из Google Apps Script
 
     async function fetchItems() {
-      const res = await fetch(scriptUrl, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'get' }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const res = await fetch(scriptUrl + '?action=get');
       const data = await res.json();
       const tbody = document.querySelector("#inventoryTable tbody");
       tbody.innerHTML = "";
@@ -88,18 +84,7 @@
       const storage = document.getElementById("storage").value;
       const photo = document.getElementById("photo").value;
 
-      await fetch(scriptUrl, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'add',
-          itemName,
-          category,
-          room,
-          storage,
-          photo
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      await fetch(`${scriptUrl}?action=add&itemName=${encodeURIComponent(itemName)}&category=${encodeURIComponent(category)}&room=${encodeURIComponent(room)}&storage=${encodeURIComponent(storage)}&photo=${encodeURIComponent(photo)}`);
 
       // Очистка формы
       e.target.reset();
