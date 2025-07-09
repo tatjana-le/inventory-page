@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Инвентарь личных вещей</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    input, select { padding: 6px; margin: 4px 0; width: 100%; }
+    .form-group { margin-bottom: 10px; }
+    #addForm { max-width: 600px; }
+  </style>
+</head>
+<body>
+  <h1>📦 Инвентарь личных вещей</h1>
+
+  <form id="addForm">
+    <div class="form-group">
+      <label>Название:</label>
+      <input type="text" id="itemName" required />
+    </div>
+    <div class="form-group">
+      <label>Категория:</label>
+      <input type="text" id="category" />
+    </div>
+    <div class="form-group">
+      <label>Комната:</label>
+      <input type="text" id="room" />
+    </div>
+    <div class="form-group">
+      <label>Место хранения:</label>
+      <input type="text" id="storage" />
+    </div>
+    <div class="form-group">
+      <label>Фото (ссылка):</label>
+      <input type="text" id="photo" placeholder="https://..." />
+    </div>
+    <button type="submit">Добавить вещь</button>
+  </form>
+
+  <h2>Список вещей</h2>
+  <table id="inventoryTable">
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Категория</th>
+        <th>Комната</th>
+        <th>Место хранения</th>
+        <th>Фото</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwsbMrYAmOLxnrIqK0NtWQzieJ3SO_ymRnCNFQ-YD7KdyZWiYIWfMSFS3JXjFUOfgswcA/exec'; // ← вставь сюда свой URL из Google Apps Script
+
+    async function fetchItems() {
+      const res = await fetch(scriptUrl, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'get' }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      const tbody = document.querySelector("#inventoryTable tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.itemName}</td>
+          <td>${item.category}</td>
+          <td>${item.room}</td>
+          <td>${item.storage}</td>
+          <td>${item.photo ? `<a href="${item.photo}" target="_blank">Фото</a>` : ''}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    document.getElementById("addForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const itemName = document.getElementById("itemName").value;
+      const category = document.getElementById("category").value;
+      const room = document.getElementById("room").value;
+      const storage = document.getElementById("storage").value;
+      const photo = document.getElementById("photo").value;
+
+      await fetch(scriptUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'add',
+          itemName,
+          category,
+          room,
+          storage,
+          photo
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      // Очистка формы
+      e.target.reset();
+      fetchItems();
+    });
+
+    // Загрузка данных при открытии
+    fetchItems();
+  </script>
+</body>
+</html>
