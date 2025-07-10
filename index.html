@@ -86,6 +86,7 @@
 
       await fetch(`${scriptUrl}?action=add&itemName=${encodeURIComponent(itemName)}&category=${encodeURIComponent(category)}&room=${encodeURIComponent(room)}&storage=${encodeURIComponent(storage)}&photo=${encodeURIComponent(photo)}`);
 
+
       // Очистка формы
       e.target.reset();
       fetchItems();
