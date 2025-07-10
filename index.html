@@ -59,7 +59,9 @@
 
     async function fetchItems() {
       const res = await fetch(scriptUrl + '?action=get');
-      const data = await res.json();
+//      const data = await res.json();
+      const text = await res.text();
+      console.log('RAW response:', text);
       const tbody = document.querySelector("#inventoryTable tbody");
       tbody.innerHTML = "";
 
